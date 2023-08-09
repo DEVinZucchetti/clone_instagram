@@ -1,15 +1,17 @@
 <template>
-  <form  @submit.prevent="handleCreateAccount" class="form-login">
+  <form @submit.prevent="handleCreateAccount" class="form-login">
     <h2>Criar conta</h2>
 
     <div class="form-element">
       <label for="name"> Nome completo </label>
       <input class="form-input" id="name" v-model="name" />
+      {{ this.errors.name }}
     </div>
 
     <div class="form-element">
       <label for="email"> Email </label>
       <input class="form-input" id="email" v-model="email" />
+      {{ this.errors.email }}
     </div>
 
     <div class="form-element">
@@ -42,9 +44,8 @@
       <textarea id="bio" v-model="bio" class="form-textarea"> </textarea>
     </div>
 
-
     <div class="form-element">
-      <p>Selecione um tipo de plano: </p>
+      <p>Selecione um tipo de plano:</p>
 
       <div class="form-radio">
         <input id="bronze" type="radio" value="1" v-model="planType" />
@@ -64,8 +65,8 @@
 
     <div class="form-element">
       <label id="confirmTerms">
-      <input type="checkbox" id="confirmTerms" v-model="confirmTerms" /> Aceita termos de Uso
-    </label>
+        <input type="checkbox" id="confirmTerms" v-model="confirmTerms" /> Aceita termos de Uso
+      </label>
     </div>
 
     <button type="submit">Criar conta</button>
@@ -73,6 +74,9 @@
 </template>
     
 <script>
+import * as yup from 'yup'
+import { captureErrorYup } from '../../utils/captureErrorYup'
+
 export default {
   data() {
     return {
@@ -84,12 +88,39 @@ export default {
       sponsor: '',
       bio: '',
       confirmTerms: true,
-      planType: '2'
+      planType: '2',
+
+      errors: {}
     }
   },
   methods: {
-    handleCreateAccount(){
-      // SCHEMA VALIDATION
+    handleCreateAccount() {
+      try {
+        // 1 - CRIAR SCHEMA VALIDATION
+        const schema = yup.object().shape({
+          name: yup.string().required('Nome é obrigatório').min(10, "O nome é pequeno").max(20, "O nome é grande demais"),
+          email: yup.string().email('Email não é valido').required('Email é obrigatório'),
+          phone: yup.string().required('Telefone é obrigatório')
+        })
+
+        schema.validateSync(
+          {
+            name: this.name,
+            email: this.email,
+            phone: this.phone
+          },
+          { abortEarly: false }
+        )
+
+        console.log('AQUIII')
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          console.log(error)
+          // capturar os errors do yup
+         
+          this.errors = captureErrorYup(error)
+        }
+      }
     }
   }
 }
@@ -136,7 +167,6 @@ export default {
   align-items: center;
   gap: 5px;
 }
-
 
 .error-box {
   background: tomato;
