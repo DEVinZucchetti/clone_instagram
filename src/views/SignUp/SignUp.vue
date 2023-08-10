@@ -114,7 +114,7 @@ export default {
             .string()
             .required('A confirmação necessária')
             .oneOf([yup.ref('password')], 'As senhas devem coincidir'),
-            confirmTerms: yup.boolean().isTrue("O termo de uso deve ser aceito")
+          confirmTerms: yup.boolean().isTrue('O termo de uso deve ser aceito')
         })
 
         schema.validateSync(
@@ -129,10 +129,39 @@ export default {
           { abortEarly: false }
         )
 
-        // Cadastro de usuario 
+        // Cadastro de usuario
 
-
-        
+        fetch('http://localhost:3000/api/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: this.name,
+            email: this.email,
+            phone: this.phone,
+            password: this.password,
+            verifyPassword: this.verifyPassword,
+            sponsor: this.sponsor,
+            bio: this.bio,
+            confirmTerms: this.confirmTerms,
+            planType: this.planType
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then((response) => {
+            console.log('entrei aqui no then')
+            if (response.ok === false) {
+              throw new Error()
+            }
+            return response.json()
+          })
+          .then((response) => {
+            alert('Cadastrado com sucesso')
+            this.$router.push('/')
+          })
+          .catch(() => {
+            alert('Houve uma falha ao tentar cadastrar')
+          })
       } catch (error) {
         if (error instanceof yup.ValidationError) {
           console.log(error)
