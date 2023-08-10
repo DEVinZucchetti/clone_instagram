@@ -5,28 +5,31 @@
     <div class="form-element">
       <label for="name"> Nome completo </label>
       <input class="form-input" id="name" v-model="name" />
-      {{ this.errors.name }}
+      <span class="message-error">{{ this.errors.name }}</span>
     </div>
 
     <div class="form-element">
       <label for="email"> Email </label>
       <input class="form-input" id="email" v-model="email" />
-      {{ this.errors.email }}
+      <span class="message-error">{{ this.errors.email }}</span>
     </div>
 
     <div class="form-element">
       <label for="phone"> Telefone </label>
       <input class="form-input" id="phone" v-model="phone" />
+      <span class="message-error">{{ this.errors.phone }}</span>
     </div>
 
     <div class="form-element">
       <label for="password"> Senha </label>
       <input class="form-input" id="password" type="password" v-model="password" />
+      <span class="message-error">{{ this.errors.password }}</span>
     </div>
 
     <div class="form-element">
       <label for="verifyPassword"> Confirma senha </label>
       <input class="form-input" id="verifyPassword" type="password" v-model="verifyPassword" />
+      <span class="message-error">{{ this.errors.verifyPassword }}</span>
     </div>
 
     <div class="form-element">
@@ -67,6 +70,7 @@
       <label id="confirmTerms">
         <input type="checkbox" id="confirmTerms" v-model="confirmTerms" /> Aceita termos de Uso
       </label>
+      <span class="message-error">{{ this.errors.confirmTerms }}</span>
     </div>
 
     <button type="submit">Criar conta</button>
@@ -98,26 +102,41 @@ export default {
       try {
         // 1 - CRIAR SCHEMA VALIDATION
         const schema = yup.object().shape({
-          name: yup.string().required('Nome é obrigatório').min(10, "O nome é pequeno").max(20, "O nome é grande demais"),
+          name: yup.string().required('Nome é obrigatório'),
           email: yup.string().email('Email não é valido').required('Email é obrigatório'),
-          phone: yup.string().required('Telefone é obrigatório')
+          phone: yup.string().required('Telefone é obrigatório'),
+          password: yup
+            .string()
+            .min(8, 'A senha deve ser maior')
+            .max(20, 'Deve ter entre 8-20 letras')
+            .required('A senha é obrigatória'),
+          verifyPassword: yup
+            .string()
+            .required('A confirmação necessária')
+            .oneOf([yup.ref('password')], 'As senhas devem coincidir'),
+            confirmTerms: yup.boolean().isTrue("O termo de uso deve ser aceito")
         })
 
         schema.validateSync(
           {
             name: this.name,
             email: this.email,
-            phone: this.phone
+            phone: this.phone,
+            password: this.password,
+            verifyPassword: this.verifyPassword,
+            confirmTerms: this.confirmTerms
           },
           { abortEarly: false }
         )
 
-        console.log('AQUIII')
+        // Cadastro de usuario 
+
+
+        
       } catch (error) {
         if (error instanceof yup.ValidationError) {
           console.log(error)
           // capturar os errors do yup
-         
           this.errors = captureErrorYup(error)
         }
       }
@@ -168,26 +187,13 @@ export default {
   gap: 5px;
 }
 
-.error-box {
-  background: tomato;
-  width: 80%;
-  color: #fff;
-}
-
-.input-area {
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.input-area input {
-  width: 100%;
-}
-
-.texto-erro {
+.message-error {
   color: red;
   margin: 4px;
+}
+
+.input-error {
+  border-color: red;
 }
 
 button {
@@ -203,9 +209,5 @@ button {
 
 button:hover {
   background-color: #286ee0;
-}
-
-.input-error {
-  border-color: red;
 }
 </style>
