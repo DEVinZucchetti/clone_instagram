@@ -4,6 +4,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Home from '../views/Home/index.vue'
 import Login from '../views/Login/Login.vue'
 import SignUp from '../views/SignUp/SignUp.vue'
+import NewPost from '../views/Posts/New/NewPost.vue'
 
 // criar o roteamento da aplicação
 
@@ -24,6 +25,11 @@ const router = createRouter({
             path: '/home',
             name: 'Home',
             component: Home
+        },
+        {
+            path: '/posts/novo',
+            name: 'NewPost',
+            component: NewPost 
         }
     ]
 })

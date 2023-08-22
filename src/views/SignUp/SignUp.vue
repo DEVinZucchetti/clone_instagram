@@ -133,7 +133,7 @@ export default {
         // Cadastro de usuario
 
         axios({
-          url: 'https://3999-177-37-231-113.ngrok.io/api/register',
+          url: 'http://localhost:3000/api/register',
           method: 'POST',
           data: {
             name: this.name,

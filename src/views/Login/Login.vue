@@ -48,7 +48,11 @@ export default {
             password: this.password
           }
         })
-        .then(() => {
+        .then((response) => {
+          
+          localStorage.setItem("instagram_token", response.data.token)
+          localStorage.setItem("instagram_name", response.data.name)
+
           this.$router.push('/home')
           console.log("logado com sucesso")
         })
