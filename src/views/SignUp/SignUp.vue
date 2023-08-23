@@ -127,7 +127,7 @@ export default {
             verifyPassword: this.verifyPassword,
             confirmTerms: this.confirmTerms
           },
-          { abortEarly: false }
+          { abortEarly: false } // importante
         )
 
         // Cadastro de usuario
