@@ -20,6 +20,10 @@
     style="display: none"
   />
 
+ <form>
+
+  </form>
+
   ---------------------------------------
   <v-table>
     <thead>
@@ -38,6 +42,10 @@
         <td>{{ post.title }}</td>
         <td>{{ post.description }}</td>
         <td>
+         
+         <v-btn @click="() => redirectDetails(post)">Ver detalhes</v-btn>
+         <router-link to="/posts/visualizar"><v-btn>Ver detalhes</v-btn></router-link>
+
           <v-btn @click="() => deletarPost(post.id)">Deletar</v-btn>
         </td>
       </tr>
@@ -63,18 +71,20 @@ export default {
 
       axios({
         url: 'http://localhost:3000/api/posts',
-        method: 'GET',
+        method: 'GET', // cuidade para não digitar methods ao invés de method
         headers: {
           Authorization: `Bearen ${token}`
         }
       })
         .then((response) => {
+          
           this.posts = response.data.posts
         })
         .catch(() => {
           alert('deu ruim')
         })
     },
+
     deletarPost(id) {
       const token = localStorage.getItem('instagram_token')
 
@@ -87,12 +97,27 @@ export default {
       })
         .then(() => {
           alert('Deletado com sucesso')
-          // atualizar posts 
+          // atualizar posts
           this.loadPosts()
         })
         .catch(() => {
           alert('erro ao deletar o post ')
         })
+    },
+
+    redirectDetails(post) {
+     
+
+        this.$router.push({path: `/posts/${post.id}/visualizar`, query: {
+          titulo: post.title,
+          descricao: post.description
+        }})
+      /*
+      this.$router.push({
+        path: `/posts/${post.id}/visualizar`,
+        query: { title: post.title }
+      })
+      */
     }
   }
 }

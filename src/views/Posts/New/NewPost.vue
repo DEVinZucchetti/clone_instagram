@@ -1,5 +1,27 @@
 <template>
   <v-form @submit.prevent="handleSubmit">
+      <button @click="showData">Show</button>
+    <input type="date"  v-model="dataInput"/>
+    {{dataInput}}
+
+  <v-select 
+  :items="['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado', 'Domingo']" 
+  v-model="day"
+  >
+
+  </v-select>
+
+  <VueDatePicker
+      v-model="dateBirth"
+      :max="new Date()"
+      locale="pt-BR"
+      cancelText="cancelar"
+      selectText="Selecionar"
+      :enable-time-picker="false"
+    />
+   {{ errors?.dateBirth }}
+
+    {{ dateBirth }}
     <v-text-field label="Título" variant="outlined" v-model="title" />
     <span>{{ this.errors.title }} </span>
     <v-textarea label="Descrição" v-model="description" />
@@ -21,10 +43,35 @@ export default {
       title: '',
       description: '',
       url: '',
-      errors: {}
+      errors: {},
+      dateBirth: null,
+      dataInput: '',
+      day: this.getCurrentDay()
     }
   },
   methods: {
+    showData() {
+      
+
+
+    },
+    getCurrentDay(){
+      const value = new Date().getDay()
+      
+      const days = [
+        {value: 'Segunda', number: 1},
+        {value: 'Terça', number: 2},
+        {value: 'Quarta', number: 3},
+        {value: 'Quinta', number: 4},
+        {value: 'Sexta', number: 5},
+        {value: 'Sábado', number: 6},
+        {value: 'Domingo', number: 0}
+      ]
+
+      const option = days.find(item => item.number === value)
+
+      return option.value
+    },
     handleSubmit() {
       try {
         // 1 - criar schema validation
@@ -35,14 +82,18 @@ export default {
             .string()
             .required('Descrição é obrigatório')
             .min(20, 'A descrição é pequena demais')
-            .max(200, 'A descrição ultrapassou o limite')
+            .max(200, 'A descrição ultrapassou o limite'),
+            dateBirth: yup.date()
+            .max(new Date(), 'A data é no futuro')
+            .required("A data é obrigatória")
         })
 
         schema.validateSync(
           {
             title: this.title,
             description: this.description,
-            url: this.url
+            url: this.url,
+            dateBirth: this.dateBirth
           },
           { abortEarly: false }
         ) // importante
@@ -55,7 +106,8 @@ export default {
           data: {
             title: this.title,
             description: this.description,
-            url: this.url
+            url: this.url,
+            date: this.dateBirth
           },
           headers: {
             Authorization: `Bearen ${token}`
@@ -78,6 +130,14 @@ export default {
           this.errors = captureErrorYup(error)
         }
       }
+    },
+    mounted() {
+      axios({
+        url: '/exercises'
+      })
+      .then(response => {
+        this.exercises = response.data
+      })
     }
   }
 }

@@ -1,5 +1,6 @@
 <template>
     <h1>Conteúdo principal</h1>
+    {{ nomeUsuario}}
     <p>Este é o conteúdo principal da página.</p>
     <p id="bem_vindo_usuario"></p>
     <p>Nome: <span id="nome"></span> </p>
@@ -81,7 +82,8 @@ export default {
             post: {
                 usuario: '',
                 imagem: ''
-            }
+            },
+            nomeUsuario: localStorage.getItem('instagram_name')
         }
     },
     methods: {
@@ -95,6 +97,27 @@ export default {
         this.$refs.form.reset()
       }
     }
+  },
+  
+  mounted() {
+    // requisição busca os dados
+    /*
+    axios({
+        url: 'url'
+    })
+    .then(response => {
+        console.log(response.data) 
+
+        this.quantidadeALunos = 
+        
+         {
+            quantidade_alunos: 10,
+            quantidade_exercicios: 20
+         }
+
+      
+    })
+      */
   }
 }
 </script>
