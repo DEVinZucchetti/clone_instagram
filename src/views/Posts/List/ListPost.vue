@@ -20,9 +20,7 @@
     style="display: none"
   />
 
- <form>
-
-  </form>
+  <form></form>
 
   ---------------------------------------
   <v-table>
@@ -42,9 +40,8 @@
         <td>{{ post.title }}</td>
         <td>{{ post.description }}</td>
         <td>
-         
-         <v-btn @click="() => redirectDetails(post)">Ver detalhes</v-btn>
-         <router-link to="/posts/visualizar"><v-btn>Ver detalhes</v-btn></router-link>
+          <v-btn @click="() => redirectDetails(post)">Ver detalhes</v-btn>
+          <router-link to="/posts/visualizar"><v-btn>Ver detalhes</v-btn></router-link>
 
           <v-btn @click="() => deletarPost(post.id)">Deletar</v-btn>
         </td>
@@ -77,7 +74,6 @@ export default {
         }
       })
         .then((response) => {
-          
           this.posts = response.data.posts
         })
         .catch(() => {
@@ -106,12 +102,13 @@ export default {
     },
 
     redirectDetails(post) {
-     
-
-        this.$router.push({path: `/posts/${post.id}/visualizar`, query: {
+      this.$router.push({
+        path: `/posts/${post.id}/visualizar`,
+        query: {
           titulo: post.title,
           descricao: post.description
-        }})
+        }
+      })
       /*
       this.$router.push({
         path: `/posts/${post.id}/visualizar`,
